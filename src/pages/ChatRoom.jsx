@@ -28,8 +28,9 @@ const ChatRoom = () => {
   const filteredUsers = users
     .filter(user => user.id !== currentUser.id)
     .filter(user => {
-      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = filterRole === 'all' || user.role === filterRole;
       return matchesSearch && matchesRole;
     });
@@ -47,12 +48,11 @@ const ChatRoom = () => {
     }
   };
 
-  const canChatWithUser = (targetUser) => {
-    if (currentUser.role === 'Admin') return true;
-    if (currentUser.role === 'Staff' && targetUser.role !== 'Agent') return true;
-    if (currentUser.role === 'Agent' && targetUser.role !== 'Agent') return true;
-    return false;
-  };
+  const canChatWithUser = (targetUser) => (
+    currentUser.role === 'Admin' ||
+    (currentUser.role === 'Staff' && targetUser.role !== 'Agent') ||
+    (currentUser.role === 'Agent' && targetUser.role !== 'Agent')
+  );
 
   if (!currentUser) {
     return <div>Loading...</div>;
@@ -88,7 +88,10 @@ const ChatRoom = () => {
 
           {/* Search */}
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               placeholder="Search users..."
@@ -127,16 +130,18 @@ const ChatRoom = () => {
             filteredUsers.map((user) => {
               const canChat = canChatWithUser(user);
               const unreadCount = messages.filter(
-                msg => msg.senderId === user.id && 
-                       msg.receiverId === currentUser.id && 
-                       !msg.read
+                msg =>
+                  msg.senderId === user.id &&
+                  msg.receiverId === currentUser.id &&
+                  !msg.read
               ).length;
 
               return (
-                <div
+                <button
                   key={user.id}
                   onClick={() => canChat && setSelectedUser(user)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
+                  disabled={!canChat}
+                  className={`w-full text-left p-4 border-b border-gray-100 transition-colors ${
                     selectedUser?.id === user.id
                       ? 'bg-blue-50 border-blue-200'
                       : 'hover:bg-gray-50'
@@ -161,14 +166,12 @@ const ChatRoom = () => {
                       <div className="flex items-center space-x-2 mt-1">
                         {getRoleIcon(user.role)}
                         <RoleBadge role={user.role} />
-                        {!canChat && (
-                          <span className="text-xs text-red-600">No permission</span>
-                        )}
+                        {!canChat && <span className="text-xs text-red-600">No permission</span>}
                       </div>
                       <p className="text-sm text-gray-500 truncate">{user.email}</p>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })
           )}
@@ -189,7 +192,9 @@ const ChatRoom = () => {
           <div className="flex-1 flex items-center justify-center bg-gray-50">
             <div className="text-center">
               <Users size={64} className="mx-auto mb-4 text-gray-300" />
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Select a user to start chatting</h3>
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                Select a user to start chatting
+              </h3>
               <p className="text-gray-500">
                 Choose someone from the user list to begin your conversation
               </p>

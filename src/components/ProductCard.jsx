@@ -1,41 +1,39 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Image as ImageIcon, DollarSign } from 'lucide-react';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { ShoppingCart, Image as ImageIcon, DollarSign } from "lucide-react";
 
 const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    description: '',
-    imageUrl: ''
+    name: "",
+    price: "",
+    description: "",
+    imageUrl: "",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSendProduct) {
-      onSendProduct({
-        id: Date.now(),
-        ...formData,
-        price: parseFloat(formData.price)
-      });
-    }
+    onSendProduct?.({
+      id: Date.now(),
+      ...formData,
+      price: parseFloat(formData.price),
+    });
   };
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  // Display mode - show product for purchase
   if (isDisplayOnly && product) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
         <div className="flex items-start space-x-3">
           <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
             {product.imageUrl ? (
-              <img 
-                src={product.imageUrl} 
+              <img
+                src={product.imageUrl}
                 alt={product.name}
                 className="w-full h-full object-cover rounded-lg"
               />
@@ -49,10 +47,12 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1">
                 <DollarSign size={16} className="text-green-600" />
-                <span className="font-bold text-lg text-green-600">${product.price}</span>
+                <span className="font-bold text-lg text-green-600">
+                  ${product.price}
+                </span>
               </div>
               <button
-                onClick={() => onBuyNow && onBuyNow(product)}
+                onClick={() => onBuyNow?.(product)}
                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center space-x-1"
               >
                 <ShoppingCart size={16} />
@@ -65,16 +65,19 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
     );
   }
 
-  // Form mode - create new product
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
       <h4 className="font-semibold text-gray-900 mb-3">Create Product</h4>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Product Name
           </label>
           <input
+            id="name"
             type="text"
             name="name"
             value={formData.name}
@@ -84,12 +87,16 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
             placeholder="Enter product name"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="price"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Price ($)
           </label>
           <input
+            id="price"
             type="number"
             name="price"
             value={formData.price}
@@ -101,12 +108,16 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
             placeholder="0.00"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Description
           </label>
           <textarea
+            id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
@@ -115,12 +126,16 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
             placeholder="Enter product description"
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="imageUrl"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Image URL (optional)
           </label>
           <input
+            id="imageUrl"
             type="url"
             name="imageUrl"
             value={formData.imageUrl}
@@ -129,7 +144,7 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
             placeholder="https://example.com/image.jpg"
           />
         </div>
-        
+
         <div className="flex space-x-2">
           <button
             type="submit"
@@ -142,6 +157,19 @@ const ProductCard = ({ product, isDisplayOnly = false, onSendProduct, onBuyNow }
       </form>
     </div>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    description: PropTypes.string,
+    imageUrl: PropTypes.string,
+  }),
+  isDisplayOnly: PropTypes.bool,
+  onSendProduct: PropTypes.func,
+  onBuyNow: PropTypes.func,
 };
 
 export default ProductCard;

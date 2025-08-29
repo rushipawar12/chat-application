@@ -1,0 +1,6 @@
+projectKey=chat_application
+serverUrl=http://localhost:9000
+serverVersion=25.8.0.112029
+dashboardUrl=http://localhost:9000/dashboard?id=chat_application
+ceTaskId=e1accca7-b525-4509-9b41-8aad80bd6dc7
+ceTaskUrl=http://localhost:9000/api/ce/task?id=e1accca7-b525-4509-9b41-8aad80bd6dc7

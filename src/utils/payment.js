@@ -1,4 +1,3 @@
-// Payment processing utilities
 export const PAYMENT_STATUS = {
   PENDING: 'pending',
   PROCESSING: 'processing',
@@ -13,18 +12,14 @@ export const PAYMENT_METHODS = {
   BANK_TRANSFER: 'bank_transfer'
 };
 
-// Simulate Stripe payment processing
 export const processPayment = async (paymentData) => {
   try {
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Simulate payment validation
     if (!paymentData.cardNumber || !paymentData.expiry || !paymentData.cvc) {
       throw new Error('Invalid payment details');
     }
 
-    // Simulate card validation (basic)
     if (paymentData.cardNumber.replace(/\s/g, '').length !== 16) {
       throw new Error('Invalid card number');
     }
@@ -33,7 +28,6 @@ export const processPayment = async (paymentData) => {
       throw new Error('Invalid CVC');
     }
 
-    // Simulate successful payment
     const transaction = {
       id: `txn_${Date.now()}`,
       amount: paymentData.amount,
@@ -63,7 +57,6 @@ export const processPayment = async (paymentData) => {
   }
 };
 
-// Calculate tax and total
 export const calculateTotal = (subtotal, taxRate = 0.1) => {
   const tax = subtotal * taxRate;
   const total = subtotal + tax;
@@ -75,7 +68,6 @@ export const calculateTotal = (subtotal, taxRate = 0.1) => {
   };
 };
 
-// Format currency
 export const formatCurrency = (amount, currency = 'USD') => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -83,16 +75,13 @@ export const formatCurrency = (amount, currency = 'USD') => {
   }).format(amount);
 };
 
-// Validate card details
 export const validateCardDetails = (cardData) => {
   const errors = [];
 
-  // Card number validation
   if (!cardData.number || cardData.number.replace(/\s/g, '').length !== 16) {
     errors.push('Invalid card number');
   }
 
-  // Expiry date validation
   if (!cardData.expiry || !/^\d{2}\/\d{2}$/.test(cardData.expiry)) {
     errors.push('Invalid expiry date (MM/YY format)');
   } else {
@@ -107,12 +96,10 @@ export const validateCardDetails = (cardData) => {
     }
   }
 
-  // CVC validation
   if (!cardData.cvc || cardData.cvc.length < 3) {
     errors.push('Invalid CVC');
   }
 
-  // Cardholder name validation
   if (!cardData.name || cardData.name.trim().length < 2) {
     errors.push('Invalid cardholder name');
   }
@@ -123,7 +110,6 @@ export const validateCardDetails = (cardData) => {
   };
 };
 
-// Save transaction to local storage
 export const saveTransaction = (transaction) => {
   try {
     const existingTransactions = JSON.parse(localStorage.getItem('chatAppTransactions') || '[]');
@@ -136,7 +122,6 @@ export const saveTransaction = (transaction) => {
   }
 };
 
-// Get transaction history
 export const getTransactionHistory = () => {
   try {
     return JSON.parse(localStorage.getItem('chatAppTransactions') || '[]');
@@ -146,7 +131,6 @@ export const getTransactionHistory = () => {
   }
 };
 
-// Generate receipt
 export const generateReceipt = (transaction) => {
   return {
     receiptNumber: `RCP-${Date.now()}`,

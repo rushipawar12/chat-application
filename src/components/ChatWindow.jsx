@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import MessageBubble from './MessageBubble';
-import RoleBadge from './RoleBadge';
-import ProductCard from './ProductCard';
-import { Send, Mic, Paperclip, Smile } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import MessageBubble from "./MessageBubble";
+import RoleBadge from "./RoleBadge";
+import ProductCard from "./ProductCard";
+import { Send, Mic, Paperclip, Smile } from "lucide-react";
 
 const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translateMessage }) => {
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [showProductForm, setShowProductForm] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -20,32 +21,30 @@ const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translat
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       sendMessage(newMessage, selectedUser.id, null, currentUser);
-      setNewMessage('');
+      setNewMessage("");
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  const canSendToUser = (targetUser) => {
-    if (currentUser.role === 'Admin') return true;
-    if (currentUser.role === 'Staff' && targetUser.role !== 'Agent') return true;
-    if (currentUser.role === 'Agent' && targetUser.role !== 'Agent') return true;
-    return false;
-  };
+  const canSendToUser = (targetUser) =>
+    currentUser.role === "Admin" ||
+    (currentUser.role === "Staff" && targetUser.role !== "Agent") ||
+    (currentUser.role === "Agent" && targetUser.role !== "Agent");
 
-  const filteredMessages = messages.filter(msg => 
-    (msg.senderId === currentUser.id && msg.receiverId === selectedUser.id) ||
-    (msg.senderId === selectedUser.id && msg.receiverId === currentUser.id)
+  const filteredMessages = messages.filter(
+    (msg) =>
+      (msg.senderId === currentUser.id && msg.receiverId === selectedUser.id) ||
+      (msg.senderId === selectedUser.id && msg.receiverId === currentUser.id)
   );
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
-      {/* Chat Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
@@ -56,7 +55,7 @@ const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translat
             <div className="flex items-center space-x-2">
               <RoleBadge role={selectedUser.role} />
               <span className="text-sm text-gray-500">
-                {selectedUser.online ? 'Online' : 'Offline'}
+                {selectedUser.online ? "Online" : "Offline"}
               </span>
             </div>
           </div>
@@ -71,11 +70,10 @@ const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translat
         </div>
       </div>
 
-      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {filteredMessages.map((message, index) => (
+        {filteredMessages.map((message) => (
           <MessageBubble
-            key={index}
+            key={message.id}
             message={message}
             isOwn={message.senderId === currentUser.id}
             currentUser={currentUser}
@@ -85,7 +83,6 @@ const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translat
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
       <div className="bg-white border-t border-gray-200 p-4">
         {!canSendToUser(selectedUser) && (
           <div className="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
@@ -115,29 +112,56 @@ const ChatWindow = ({ currentUser, selectedUser, messages, sendMessage, translat
             <Send size={20} />
           </button>
         </div>
-        
-        {/* Product Selling Section */}
-        {currentUser.role === 'Admin' && (
+
+        {currentUser.role === "Admin" && (
           <div className="mt-3 pt-3 border-t border-gray-200">
             <button
               onClick={() => setShowProductForm(!showProductForm)}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
             >
-              {showProductForm ? 'Cancel' : 'Sell Product'}
+              {showProductForm ? "Cancel" : "Sell Product"}
             </button>
             {showProductForm && (
-                           <ProductCard
-               onSendProduct={(product) => {
-                 sendMessage(`[PRODUCT] ${product.name} - $${product.price}`, selectedUser.id, product, currentUser);
-                 setShowProductForm(false);
-               }}
-             />
+              <ProductCard
+                onSendProduct={(product) => {
+                  sendMessage(
+                    `[PRODUCT] ${product.name} - $${product.price}`,
+                    selectedUser.id,
+                    product,
+                    currentUser
+                  );
+                  setShowProductForm(false);
+                }}
+              />
             )}
           </div>
         )}
       </div>
     </div>
   );
+};
+
+ChatWindow.propTypes = {
+  currentUser: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+  }).isRequired,
+  selectedUser: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    online: PropTypes.bool,
+  }).isRequired,
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      senderId: PropTypes.string.isRequired,
+      receiverId: PropTypes.string.isRequired,
+      text: PropTypes.string,
+    })
+  ).isRequired,
+  sendMessage: PropTypes.func.isRequired,
+  translateMessage: PropTypes.func,
 };
 
 export default ChatWindow;

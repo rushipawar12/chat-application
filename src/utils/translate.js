@@ -1,4 +1,3 @@
-// Translation utilities
 export const SUPPORTED_LANGUAGES = {
   ENGLISH: 'en',
   HINDI: 'hi',
@@ -21,13 +20,34 @@ export const LANGUAGE_NAMES = {
   [SUPPORTED_LANGUAGES.JAPANESE]: '日本語 (Japanese)'
 };
 
-// Simulate Google Translate API
 export const translateMessage = async (text, targetLanguage = SUPPORTED_LANGUAGES.ENGLISH) => {
   try {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const apiUrl = import.meta?.env?.VITE_TRANSLATE_API_URL || '';
+    const apiKey = import.meta?.env?.VITE_TRANSLATE_API_KEY || '';
+    if (apiUrl) {
+      const payload = {
+        q: text,
+        source: 'auto',
+        target: targetLanguage,
+        format: 'text'
+      };
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
+        },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const translated = data.translatedText || data.translation || '';
+        if (translated) return translated;
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 400));
 
-    // Simple translation simulation
+    
     const translations = {
       [SUPPORTED_LANGUAGES.HINDI]: {
         'Hello': 'नमस्ते',
@@ -115,23 +135,16 @@ export const translateMessage = async (text, targetLanguage = SUPPORTED_LANGUAGE
       }
     };
 
-    // Get translations for target language
     const languageTranslations = translations[targetLanguage];
     
     if (!languageTranslations) {
-      return text; // Return original text if language not supported
+      return text;
     }
-
-    // Simple word-by-word translation
     let translatedText = text;
-    
-    // Replace known phrases
     Object.entries(languageTranslations).forEach(([english, translated]) => {
       const regex = new RegExp(`\\b${english}\\b`, 'gi');
       translatedText = translatedText.replace(regex, translated);
     });
-
-    // If no translation found, add a note
     if (translatedText === text) {
       translatedText = `${text} [Translated to ${LANGUAGE_NAMES[targetLanguage]}]`;
     }
@@ -140,17 +153,13 @@ export const translateMessage = async (text, targetLanguage = SUPPORTED_LANGUAGE
 
   } catch (error) {
     console.error('Translation error:', error);
-    return text; // Return original text on error
+    return text;
   }
 };
 
-// Detect language of text
 export const detectLanguage = async (text) => {
   try {
-    // Simulate language detection
     await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Simple language detection based on character sets
     const hasHindiChars = /[\u0900-\u097F]/.test(text);
     const hasMarathiChars = /[\u0900-\u097F]/.test(text); // Same as Hindi for demo
     const hasChineseChars = /[\u4E00-\u9FFF]/.test(text);
@@ -167,14 +176,13 @@ export const detectLanguage = async (text) => {
     if (hasGermanChars) return SUPPORTED_LANGUAGES.GERMAN;
     if (hasSpanishChars) return SUPPORTED_LANGUAGES.SPANISH;
     
-    return SUPPORTED_LANGUAGES.ENGLISH; // Default to English
+    return SUPPORTED_LANGUAGES.ENGLISH;
   } catch (error) {
     console.error('Language detection error:', error);
     return SUPPORTED_LANGUAGES.ENGLISH;
   }
 };
 
-// Get language flag emoji
 export const getLanguageFlag = (languageCode) => {
   const flags = {
     [SUPPORTED_LANGUAGES.ENGLISH]: '🇺🇸',
@@ -190,7 +198,6 @@ export const getLanguageFlag = (languageCode) => {
   return flags[languageCode] || '🌐';
 };
 
-// Save translation preferences
 export const saveTranslationPreference = (preferredLanguage) => {
   try {
     localStorage.setItem('chatAppTranslationLanguage', preferredLanguage);
@@ -201,7 +208,6 @@ export const saveTranslationPreference = (preferredLanguage) => {
   }
 };
 
-// Get translation preferences
 export const getTranslationPreference = () => {
   try {
     return localStorage.getItem('chatAppTranslationLanguage') || SUPPORTED_LANGUAGES.ENGLISH;

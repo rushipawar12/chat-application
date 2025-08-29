@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Languages } from 'lucide-react';
 
 const TranslateButton = ({ onClick, isTranslated = false }) => {
@@ -15,6 +16,11 @@ const TranslateButton = ({ onClick, isTranslated = false }) => {
       <Languages size={12} />
     </button>
   );
+};
+
+TranslateButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  isTranslated: PropTypes.bool
 };
 
 export default TranslateButton;

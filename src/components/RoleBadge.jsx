@@ -1,5 +1,6 @@
-import React from 'react';
-import { Shield, User, Users } from 'lucide-react';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Shield, User, Users } from 'lucide-react'
 
 const RoleBadge = ({ role }) => {
   const getRoleConfig = (role) => {
@@ -11,7 +12,7 @@ const RoleBadge = ({ role }) => {
           borderColor: 'border-red-200',
           icon: Shield,
           iconColor: 'text-red-600'
-        };
+        }
       case 'Staff':
         return {
           bgColor: 'bg-blue-100',
@@ -19,7 +20,7 @@ const RoleBadge = ({ role }) => {
           borderColor: 'border-blue-200',
           icon: Users,
           iconColor: 'text-blue-600'
-        };
+        }
       case 'Agent':
         return {
           bgColor: 'bg-green-100',
@@ -27,7 +28,7 @@ const RoleBadge = ({ role }) => {
           borderColor: 'border-green-200',
           icon: User,
           iconColor: 'text-green-600'
-        };
+        }
       default:
         return {
           bgColor: 'bg-gray-100',
@@ -35,19 +36,23 @@ const RoleBadge = ({ role }) => {
           borderColor: 'border-gray-200',
           icon: User,
           iconColor: 'text-gray-600'
-        };
+        }
     }
-  };
+  }
 
-  const config = getRoleConfig(role);
-  const IconComponent = config.icon;
+  const config = getRoleConfig(role)
+  const IconComponent = config.icon
 
   return (
     <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${config.bgColor} ${config.textColor} ${config.borderColor}`}>
       <IconComponent size={12} className={`mr-1 ${config.iconColor}`} />
       {role}
     </div>
-  );
-};
+  )
+}
 
-export default RoleBadge;
+RoleBadge.propTypes = {
+  role: PropTypes.string.isRequired
+}
+
+export default RoleBadge

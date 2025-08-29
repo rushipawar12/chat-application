@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ChatProvider } from './context/ChatContext';
@@ -11,6 +12,13 @@ import './App.css';
 const ProtectedRoute = ({ children }) => {
   const user = JSON.parse(localStorage.getItem('chatAppUser'));
   return user ? children : <Navigate to="/login" replace />;
+};
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.arrayOf(PropTypes.node),
+  ]).isRequired,
 };
 
 function App() {

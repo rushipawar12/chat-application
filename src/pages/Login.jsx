@@ -73,10 +73,11 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
               </label>
               <input
+                id="name"
                 type="text"
                 name="name"
                 value={formData.name}
@@ -89,10 +90,11 @@ const Login = () => {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               value={formData.email}
@@ -104,11 +106,12 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <div className="relative">
               <input
+                id="password"
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
@@ -121,6 +124,7 @@ const Login = () => {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -129,10 +133,10 @@ const Login = () => {
 
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div id="role" className="grid grid-cols-3 gap-2">
                 {['Agent', 'Staff', 'Admin'].map((role) => (
                   <button
                     key={role}
@@ -143,6 +147,7 @@ const Login = () => {
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
+                    aria-pressed={formData.role === role}
                   >
                     {getRoleIcon(role)}
                     <span className="text-xs font-medium">{role}</span>
@@ -176,7 +181,6 @@ const Login = () => {
           </button>
         </div>
 
-        {/* Demo Accounts */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-sm font-medium text-gray-700 mb-3">Demo Accounts:</h3>
           <div className="space-y-2 text-xs">
